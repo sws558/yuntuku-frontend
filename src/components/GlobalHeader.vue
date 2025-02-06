@@ -10,11 +10,21 @@
         </router-link>
       </a-col>
       <a-col flex="auto">
-        <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items"   @click="doMenuClick"/>
+        <a-menu
+          v-model:selectedKeys="current"
+          mode="horizontal"
+          :items="items"
+          @click="doMenuClick"
+        />
       </a-col>
       <a-col flex="120px">
         <div class="user-login-status">
-          <a-button type="primary" href="/user/login">登陆</a-button>
+          <div v-if="loginUserStore.loginUser.id">
+            {{ loginUserStore.loginUser.userName ?? '无名' }}
+          </div>
+          <div v-else>
+            <a-button type="primary" href="/user/login">登录</a-button>
+          </div>
         </div>
       </a-col>
     </a-row>
@@ -24,9 +34,9 @@
 import { h, ref } from 'vue'
 import { HomeOutlined } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue'
-import { useRouter } from 'vue-router' // 导入 useRouter
-
-
+import { useRouter } from 'vue-router'
+import {useLoginUserStore} from "@/stores/useLoginUserStore.ts"; // 导入 useRouter
+const loginUserStore = useLoginUserStore()
 const items = ref<MenuProps['items']>([
   {
     key: '/',
@@ -47,17 +57,15 @@ const items = ref<MenuProps['items']>([
 ])
 //当前要高亮的菜单项
 const current = ref<string[]>([])
-const router = useRouter();
-router.afterEach((to, from,next) => {
-  current.value=[to.path]
+const router = useRouter()
+router.afterEach((to, from, next) => {
+  current.value = [to.path]
 })
 //路由跳转事件
-const doMenuClick=({ key}:{key:string})=>{
-  router.push(
-    {
-      path: key
-    }
-  )
+const doMenuClick = ({ key }: { key: string }) => {
+  router.push({
+    path: key,
+  })
 }
 </script>
 
